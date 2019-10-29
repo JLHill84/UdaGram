@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "520064308546",
+    "firebase_url": "https://udagram-a8f28.firebaseio.com",
+    "project_id": "udagram-a8f28",
+    "storage_bucket": "udagram-a8f28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520064308546:android:797d95ec04ae6b516e24db",
+        "android_client_info": {
+          "package_name": "com.example.udagram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "520064308546-m90reautkn6lqqo0c5l06mdmev67bdbl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZCMHWzaKCM9weXam1TZNFW5bOY4-0uvc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "520064308546-m90reautkn6lqqo0c5l06mdmev67bdbl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
