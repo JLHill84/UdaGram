@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class CreatePage extends StatefulWidget {
   @override
@@ -15,8 +16,8 @@ class _CreatePageState extends State<CreatePage> {
   GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   Firestore _firestore = Firestore.instance;
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  String user_uid;
-  String user_display_name;
+  String userUID;
+  String userDisplayName;
   File _image;
   _post() async {
     if (_postTextController.text.trim().length == 0) {
@@ -25,20 +26,31 @@ class _CreatePageState extends State<CreatePage> {
       ));
       return;
     }
+    DocumentReference ref;
     try {
-      _firestore.collection('posts').add({
+      ref = await _firestore.collection('posts').add({
         'text': _postTextController.text.trim(),
-        'owner_name': user_display_name,
-        'owner': user_uid,
+        'owner_name': userDisplayName,
+        'owner': userUID,
         'created': DateTime.now(),
         'likes': {},
         'likes_count': 0,
         'comments_count': 0
       });
 
-      _key.currentState.showSnackBar(SnackBar(
-        content: Text('Posted!'),
-      ));
+      if (_image != null) {
+        _key.currentState.removeCurrentSnackBar();
+        _key.currentState.showSnackBar(SnackBar(
+          content: Text('Uploading image...'),
+        ));
+
+        String _url = await _uploadImageAndGetURL(ref.documentID, _image);
+        await ref.updateData({'image': _url});
+        _key.currentState.removeCurrentSnackBar();
+        _key.currentState.showSnackBar(SnackBar(
+          content: Text('Posting!'),
+        ));
+      }
 
       Future.delayed(Duration(seconds: 1), () {
         Navigator.pop(context);
@@ -91,13 +103,25 @@ class _CreatePageState extends State<CreatePage> {
         });
   }
 
+  Future<String> _uploadImageAndGetURL(String fileName, File file) async {
+    FirebaseStorage _storage = FirebaseStorage.instance;
+    StorageUploadTask _task = _storage.ref().child(fileName).putFile(
+          file,
+          StorageMetadata(contentType: 'image/png'),
+        );
+
+    final String _downloadURL =
+        await (await _task.onComplete).ref.getDownloadURL();
+    return _downloadURL;
+  }
+
   @override
   void initState() {
     super.initState();
 
     _firebaseAuth.currentUser().then((FirebaseUser user) {
-      user_uid = user.uid;
-      user_display_name = user.displayName;
+      userUID = user.uid;
+      userDisplayName = user.displayName;
     });
   }
 
@@ -190,7 +214,31 @@ class _CreatePageState extends State<CreatePage> {
                       )),
                 )
               ],
-            )
+            ),
+            _image == null
+                ? Container()
+                : Stack(
+                    children: <Widget>[
+                      Container(
+                        child: Image.file(_image),
+                        width: 300,
+                        height: 300,
+                      ),
+                      Positioned(
+                        // top: 40,
+                        // right: -12,
+                        child: IconButton(
+                          icon: Icon(Icons.close),
+                          color: Colors.black,
+                          onPressed: () {
+                            setState(() {
+                              _image = null;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  )
           ],
         ),
       ),
