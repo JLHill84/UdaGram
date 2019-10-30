@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Border, BorderRadius, BoxDecoration, BuildContext, Colors, Container, EdgeInsets, Expanded, FlatButton, Form, GlobalKey, Icon, Icons, InputBorder, InputDecoration, ListView, MainAxisAlignment, MaterialPageRoute, Navigator, Padding, RoundedRectangleBorder, Row, Scaffold, ScaffoldState, SnackBar, State, StatefulWidget, Text, TextAlign, TextEditingController, TextFormField, TextStyle, Widget;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:udagram/pages/feed.dart';
@@ -47,12 +47,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } finally {
-      setState(() {
-        _loggingIn = false;
-      });
       Navigator.push(context, MaterialPageRoute(builder: (BuildContext ctx) {
         return FeedPage();
       }));
+      setState(() {
+        _loggingIn = false;
+      });
     }
   }
 

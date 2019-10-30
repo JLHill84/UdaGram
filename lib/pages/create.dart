@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CreatePage extends StatefulWidget {
   @override
@@ -14,6 +17,7 @@ class _CreatePageState extends State<CreatePage> {
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   String user_uid;
   String user_display_name;
+  File _image;
   _post() async {
     if (_postTextController.text.trim().length == 0) {
       _key.currentState.showSnackBar(SnackBar(
@@ -45,6 +49,46 @@ class _CreatePageState extends State<CreatePage> {
         content: Text(ex.toString()),
       ));
     }
+  }
+
+  _showModalBottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext ctx) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Camera'),
+                onTap: () async {
+                  File image = await ImagePicker.pickImage(
+                      source: ImageSource.camera,
+                      maxHeight: 480,
+                      maxWidth: 480);
+                  setState(() {
+                    _image = image;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_album),
+                title: Text('Photo Album'),
+                onTap: () async {
+                  File image = await ImagePicker.pickImage(
+                      source: ImageSource.gallery,
+                      maxHeight: 480,
+                      maxWidth: 480);
+                  setState(() {
+                    _image = image;
+                  });
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        });
   }
 
   @override
@@ -93,7 +137,9 @@ class _CreatePageState extends State<CreatePage> {
                             borderRadius: BorderRadius.circular(30)),
                         splashColor: Colors.deepOrange,
                         color: Colors.deepOrange,
-                        onPressed: () {},
+                        onPressed: () {
+                          _showModalBottomSheet();
+                        },
                         child: Row(
                           children: <Widget>[
                             Padding(
