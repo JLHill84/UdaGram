@@ -58,7 +58,7 @@ class _SignupPageState extends State<SignupPage> {
       _scaffoldKey.currentState.removeCurrentSnackBar();
       _scaffoldKey.currentState.showSnackBar(
         SnackBar(
-          content: Text((ex as PlatformException).message),
+          content: Text(ex.toString()),
         ),
       );
     } finally {
